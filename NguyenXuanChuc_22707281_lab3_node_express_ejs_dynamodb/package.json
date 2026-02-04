@@ -2,12 +2,21 @@
   "name": "nguyenxuanchuc_22707281_lab3_node_express_ejs_dynamodb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "ejs",
+    "dynamodb",
+    "s3",
+    "aws"
+  ],
+  "author": "ChucNguyen",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
