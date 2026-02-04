@@ -1,3 +1,4 @@
+// services/s3Service.js
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { awsConfig, S3_BUCKET_NAME } = require('../config/awsConfig');
@@ -16,8 +17,8 @@ async function uploadFileToS3(file, fileName) {
       Bucket: S3_BUCKET_NAME,
       Key: fileName,
       Body: fileContent,
-      ContentType: file.mimetype,
-      ACL: 'public-read' // Có thể truy cập công khai
+      ContentType: file.mimetype
+      // XÓA dòng ACL: 'public-read' 
     });
     
     await s3Client.send(command);
