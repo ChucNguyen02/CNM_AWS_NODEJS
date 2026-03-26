@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sản Phẩm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .product-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: white;
+            border-radius: 3px;
+        }
+
+        .btn-add {
+            background-color: #28a745;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Danh sách sản phẩm</h2>
+    <a href="/add" class="btn btn-add">+ Thêm sản phẩm mới</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng tồn</th>
+                <th>Hình ảnh</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (products.length> 0) { %>
+                <% products.forEach(function(product) { %>
+                    <tr>
+                        <td>
+                            <%= product.id %>
+                        </td>
+                        <td>
+                            <%= product.name %>
+                        </td>
+                        <td>
+                            <%= product.price %> VNĐ
+                        </td>
+                        <td>
+                            <%= product.unit_in_stock %>
+                        </td>
+                        <td>
+                            <% if (product.url_image) { %>
+                                <img src="<%= cloudFrontDomain %>/<%= product.url_image %>" alt="<%= product.name %>"
+                                    class="product-img">
+                                <% } else { %>
+                                    <span>Không có ảnh</span>
+                                    <% } %>
+                        </td>
+                        <td>
+                            <a href="/detail/<%= product.id %>" class="btn btn-info"
+                                style="background-color: #17a2b8;">Chi tiết</a>
+                            <a href="/edit/<%= product.id %>" class="btn btn-edit">Sửa</a>
+                            <a href="/delete/<%= product.id %>" class="btn btn-delete"
+                                onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+                        </td>
+                    </tr>
+                    <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6">Hiện chưa có sản phẩm nào trong cơ sở dữ liệu.</td>
+                            </tr>
+                            <% } %>
+        </tbody>
+    </table>
+
+</body>
+
+</html>
