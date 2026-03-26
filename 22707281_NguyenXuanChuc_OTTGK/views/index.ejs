@@ -62,8 +62,19 @@
 <body>
 
     <h2>Danh sách sản phẩm</h2>
-    <a href="/add" class="btn btn-add">+ Thêm sản phẩm mới</a>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <a href="/add" class="btn btn-add" style="margin-bottom: 0;">+ Thêm sản phẩm mới</a>
 
+        <form action="/" method="GET" style="display: flex; gap: 5px;">
+            <input type="text" name="keyword" value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+                placeholder="Nhập tên sản phẩm..." style="padding: 5px; border: 1px solid #ccc; border-radius: 3px;">
+            <button type="submit" class="btn" style="background-color: #007bff;">Tìm kiếm</button>
+            <% if (typeof keyword !=='undefined' && keyword !=='' ) { %>
+                <a href="/" class="btn" style="background-color: #6c757d;">Hủy lọc</a>
+                <% } %>
+        </form>
+    </div>
     <table>
         <thead>
             <tr>

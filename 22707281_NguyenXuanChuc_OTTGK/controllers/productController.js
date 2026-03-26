@@ -5,21 +5,34 @@ const multer = require('multer');
 
 const getProducts = async (req, res) => {
     try {
-        const params = {
+        const keyword = req.query.keyword; // Lấy từ khóa từ ô tìm kiếm
+
+        let params = {
             TableName: process.env.DYNAMODB_TABLE_NAME
         };
 
-        const command = new ScanCommand(params);
-        const response = await docClient.send(command);
-        const products = response.Items || [];
+        // Nếu người dùng có nhập từ khóa tìm kiếm
+        if (keyword) {
+            params.FilterExpression = "contains(#n, :k)";
+            params.ExpressionAttributeNames = {
+                "#n": "name" // Cột cần tìm là cột 'name'
+            };
+            params.ExpressionAttributeValues = {
+                ":k": keyword // Từ khóa tìm kiếm
+            };
+        }
+
+        const data = await docClient.send(new ScanCommand(params));
+
 
         res.render('index', {
-            products: products,
-            cloudFrontDomain: process.env.CLOUDFRONT_DOMAIN
+            products: data.Items || [],
+            cloudFrontDomain: process.env.CLOUDFRONT_DOMAIN,
+            keyword: keyword || ''
         });
-    } catch (err) {
-        console.error('Loi khi lay danh sach san pham', err);
-        res.status(500).send("Da xay r loi khi lay du lieu");
+    } catch (error) {
+        console.error("Lỗi:", error);
+        res.status(500).send("Lỗi server");
     }
 };
 
@@ -87,7 +100,7 @@ const renderEditForm = async (req, res) => {
             TableName: process.env.DYNAMODB_TABLE_NAME,
             Key: { id: productId }
         };
-        
+
         const data = await docClient.send(new GetCommand(params));
 
         if (!data.Item) {
@@ -108,9 +121,9 @@ const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         const { name, price, unit_in_stock, old_image } = req.body;
-        
+
         // Mặc định giữ lại tên ảnh cũ nếu người dùng không upload ảnh mới
-        let url_image = old_image; 
+        let url_image = old_image;
 
         // Nếu người dùng CÓ chọn upload ảnh mới
         if (req.file) {
@@ -123,7 +136,7 @@ const updateProduct = async (req, res) => {
                 ContentType: req.file.mimetype
             };
             await s3Client.send(new PutObjectCommand(uploadParams));
-            
+
             // Cập nhật biến url_image thành tên ảnh mới
             url_image = fileName;
 
@@ -150,7 +163,7 @@ const updateProduct = async (req, res) => {
         };
 
         await docClient.send(new PutCommand(params));
-        
+
         // Cập nhật thành công quay về trang chủ
         res.redirect('/');
     } catch (error) {
@@ -201,7 +214,7 @@ const getProductDetail = async (req, res) => {
             TableName: process.env.DYNAMODB_TABLE_NAME,
             Key: { id: productId }
         };
-        
+
         // Lấy dữ liệu 1 sản phẩm từ DynamoDB
         const data = await docClient.send(new GetCommand(params));
 
